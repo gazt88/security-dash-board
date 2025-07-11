@@ -2,45 +2,44 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 
-  FullCalendar의 기본 스타일을 커스터마이징합니다.
-  컴포넌트에서 직접 제어할 수 없는 FullCalendar 내부 클래스에 대한 스타일입니다.
-*/
+/* 기본 폰트 설정 */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 
-/* 일요일 헤더 스타일 */
+body {
+  font-family: 'Noto Sans KR', 'Pretendard', sans-serif;
+  background-color: #F9FAFB;
+  color: #4B3B39;
+}
+
+/* FullCalendar 커스텀 스타일 */
 .fc-day-header.fc-sun {
-  color: #DC2626; /* red-600 */
+  color: #DC2626;
 }
 
-/* 토요일 헤더 스타일 */
 .fc-day-header.fc-sat {
-  color: #2563EB; /* blue-600 */
+  color: #2563EB;
 }
 
-/* 일요일 날짜 스타일 */
 .fc-day.fc-sun .fc-daygrid-day-number {
-  color: #DC2626; /* red-600 */
+  color: #DC2626;
 }
 
-/* 토요일 날짜 스타일 */
 .fc-day.fc-sat .fc-daygrid-day-number {
-  color: #2563EB; /* blue-600 */
+  color: #2563EB;
 }
 
-/* 공휴일 날짜 스타일 */
 .holiday-cell .fc-daygrid-day-number {
-  color: #DC2626; /* red-600 */
-  font-weight: 700; /* font-bold */
+  color: #DC2626;
+  font-weight: 700;
 }
 
-/* 오늘 날짜 스타일 */
 .fc-day-today {
-  background-color: #fefce8 !important; /* yellow-50 */
+  background-color: #fefce8 !important;
 }
 
-/* 오늘 날짜 숫자 스타일 */
 .fc-day-today .fc-daygrid-day-number {
-  background-color: #EF3A47; /* primary */
+  background-color: #EF3A47;
   color: white;
   border-radius: 9999px;
   width: 1.75rem;
@@ -50,124 +49,69 @@
   justify-content: center;
 }
 
-/* 이벤트 스타일 */
 .fc-event {
   cursor: pointer;
   border-width: 0;
   border-radius: 0.25rem;
-  overflow: hidden; /* 긴 텍스트가 넘칠 경우 숨김 처리 */
+  overflow: hidden;
   padding: 1px 4px;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
 }
 
-/* 더보기 링크 스타일 */
 .fc-more-link {
-  color: #4B5563; /* gray-600 */
-}
-.fc-more-link:hover {
-  color: #1F2937; /* gray-800 */
+  color: #4B5563;
 }
 
-/* 헤더 툴바 스타일 */
+.fc-more-link:hover {
+  color: #1F2937;
+}
+
 .fc-header-toolbar {
   margin-bottom: 1rem !important;
 }
 
-/* 버튼 스타일 */
 .fc-button {
   background-color: white !important;
-  color: #374151 !important; /* gray-700 */
-  border: 1px solid #D1D5DB !important; /* gray-300 */
+  color: #4B3B39 !important;
+  border: 1px solid #E5E7EB !important;
   border-radius: 0.25rem !important;
   box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
+  font-family: 'Noto Sans KR', 'Pretendard', sans-serif !important;
 }
+
 .fc-button:hover {
-  background-color: #F9FAFB !important; /* gray-50 */
-}
-.fc-button-active {
-  background-color: #F3F4F6 !important; /* gray-100 */
+  background-color: #F3F4F6 !important;
 }
 
-/* 제목 스타일 */
-.fc-toolbar-title {
-  font-size: 1.125rem !important; /* text-lg */
-  line-height: 1.75rem !important;
-  font-weight: 600 !important; /* font-semibold */
-  color: #111827 !important; /* text-gray-900 */
-}
-
-/* PDF 출력용 스타일: 최종 수정본 */
-.printing .fc {
-  background-color: white !important;
-  color: black !important;
-  border: 1px solid #ddd !important;
-  box-shadow: none !important;
-  margin: 0 auto !important;
-  width: 100% !important;
-  table-layout: fixed !important;
-  /* 높이 자동 조절의 핵심: 뷰포트 높이 제한 해제 */
-  height: auto !important;
-}
-
-.printing .fc-view-harness,
-.printing .fc-daygrid-view,
-.printing .fc-scrollgrid,
-.printing .fc-daygrid-body,
-.printing .fc-daygrid-body > tr,
-.printing .fc-scrollgrid-sync-table,
-.printing .fc-scrollgrid-sync-table > tbody,
-.printing .fc-scrollgrid-sync-table > tbody > tr {
-  /* 높이 자동 조절을 위해 관련된 모든 컨테이너의 높이를 auto로 설정 */
-  height: auto !important;
-}
-
-.printing .fc-header-toolbar {
-  padding-bottom: 1rem !important;
-}
-
-.printing .fc-col-header-cell {
-  background-color: #f5f5f5 !important;
-  font-weight: bold !important;
-}
-
-.printing .fc-daygrid-day,
-.printing .fc-col-header-cell {
-  border: 1px solid #ddd !important;
-  height: auto !important; /* 각 셀의 높이도 auto로 설정 */
-}
-
-.printing .fc-daygrid-day-frame {
-  min-height: 120px; /* PDF에서 셀 높이 넉넉하게 */
-  height: auto !important;
-}
-
-.printing .fc-daygrid-day-number {
-  color: #333 !important;
-}
-
-.printing .fc-day.fc-sun .fc-daygrid-day-number,
-.printing .holiday-cell .fc-daygrid-day-number {
-  color: #d9534f !important;
-}
-
-.printing .fc-day.fc-sat .fc-daygrid-day-number {
-  color: #428bca !important;
-}
-
-.printing .fc-day-today {
-  background-color: #ffffd4 !important;
-}
-
-.printing .fc-event {
+.fc-button-primary {
+  background-color: #EF3A47 !important;
   color: white !important;
-  text-align: center !important;
-  margin: 1px auto !important;
-  padding: 2px !important;
-  font-size: 1rem !important; /* PDF에서 더 크게 */
-  white-space: normal !important; /* 줄바꿈 허용 */
-  line-height: 1.3 !important;
-  word-break: break-all !important; /* 단어 단위가 아니라 글자 단위로 줄바꿈 */
 }
 
-.printing .fc-more-link {
-  display: none !important;
+.fc-button-primary:hover {
+  background-color: #DC2626 !important;
+}
+
+/* 상태별 색상 */
+.status-annual { background-color: #F87171; }
+.status-half { background-color: #FACC15; }
+.status-duty { background-color: #F97316; }
+.status-meeting { background-color: #60A5FA; }
+.status-business { background-color: #A855F7; }
+.status-weekly { background-color: #9333EA; }
+.status-monthly { background-color: #0891B2; }
+
+/* 접근성 */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.max-w-dashboard {
+  max-width: 1280px;
 } 

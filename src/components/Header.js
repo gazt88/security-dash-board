@@ -5,7 +5,6 @@ const Header = () => {
     <header className="bg-white shadow-sm border-b border-gray-200">
       <div className="max-w-dashboard mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          {/* 로고 및 타이틀 */}
           <div className="flex items-center space-x-4">
             <img 
               src="/images/로고_OK금융그룹_03.png" 
@@ -20,8 +19,7 @@ const Header = () => {
             </h1>
           </div>
           
-          {/* 우측 정보 */}
-          <div className="text-sm text-gray-600">
+          <div className="text-sm text-text-dark">
             클릭하여 일정을 추가하고 편집하세요
           </div>
         </div>
