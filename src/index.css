@@ -2,103 +2,181 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 기본 스타일 */
-* {
+/* 캘린더 스타일 */
+.calendar-container {
+  @apply w-full;
+}
+
+/* 주말 셀 스타일 */
+.weekend-cell {
+  @apply text-red-600 bg-red-50;
+}
+
+/* 공휴일 셀 스타일 */
+.holiday-cell {
+  @apply text-red-600 bg-red-50;
+}
+
+/* 공휴일 이벤트 스타일 */
+.holiday-event {
+  @apply opacity-20;
+}
+
+/* 일요일 헤더 스타일 */
+.fc-day-header.fc-sun {
+  @apply text-red-600;
+}
+
+/* 토요일 헤더 스타일 */
+.fc-day-header.fc-sat {
+  @apply text-blue-600;
+}
+
+/* 일요일 날짜 스타일 */
+.fc-day.fc-sun .fc-daygrid-day-number {
+  @apply text-red-600;
+}
+
+/* 토요일 날짜 스타일 */
+.fc-day.fc-sat .fc-daygrid-day-number {
+  @apply text-blue-600;
+}
+
+/* 공휴일 날짜 스타일 */
+.holiday-cell .fc-daygrid-day-number {
+  @apply text-red-600 font-bold;
+}
+
+/* 오늘 날짜 스타일 */
+.fc-day-today {
+  @apply bg-yellow-50 !important;
+}
+
+/* 오늘 날짜 숫자 스타일 */
+.fc-day-today .fc-daygrid-day-number {
+  @apply bg-primary text-white rounded-full w-7 h-7 flex items-center justify-center;
+}
+
+/* 이벤트 스타일 */
+.fc-event {
+  @apply cursor-pointer border-0 rounded;
+}
+
+/* 더보기 링크 스타일 */
+.fc-more-link {
+  @apply text-gray-600 hover:text-gray-800;
+}
+
+/* 헤더 툴바 스타일 */
+.fc-header-toolbar {
+  @apply mb-4 !important;
+}
+
+/* 버튼 스타일 */
+.fc-button {
+  @apply bg-white text-gray-700 border border-gray-300 rounded shadow-sm hover:bg-gray-50 !important;
+}
+
+.fc-button-active {
+  @apply bg-gray-100 !important;
+}
+
+/* 제목 스타일 */
+.fc-toolbar-title {
+  @apply text-lg font-semibold text-gray-900 !important;
+}
+
+/* PDF 출력용 스타일 */
+.printing {
+  @apply !important;
+  width: 100%;
+  max-width: none;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-body {
-  font-family: 'Noto Sans KR', 'Pretendard', sans-serif;
-  background-color: #F9FAFB;
-  color: #4B3B39;
-}
-
-/* FullCalendar 커스텀 스타일 */
-.fc-theme-standard td, .fc-theme-standard th {
-  border-color: #E5E7EB;
-}
-
-.fc-daygrid-event {
-  border-radius: 4px;
+.printing .fc {
+  @apply !important;
+  background-color: white;
   border: none;
-  margin: 1px;
+  box-shadow: none;
+  margin: 0 auto;
 }
 
-.fc-toolbar-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #4B3B39;
+.printing .fc-header-toolbar {
+  @apply !important;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.fc-button-primary {
-  background-color: #EF3A47;
-  border-color: #EF3A47;
+.printing .fc-view-harness {
+  @apply !important;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.fc-button-primary:hover {
-  background-color: #DC2626;
-  border-color: #DC2626;
+.printing .fc-daygrid-day {
+  @apply !important;
+  min-height: 120px;
+  vertical-align: middle;
 }
 
-/* 휴일 및 주말 스타일링 */
-.holiday-cell {
-  background-color: #FEF2F2 !important;
-  color: #DC2626 !important;
+.printing .fc-daygrid-day-frame {
+  @apply !important;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
-.weekend-cell {
-  background-color: #F8FAFC !important;
-  color: #64748B !important;
+.printing .fc-daygrid-day-top {
+  @apply !important;
+  justify-content: center;
+  padding-top: 0.5rem;
 }
 
-.holiday-event {
-  font-weight: 500;
-  opacity: 0.8;
+.printing .fc-daygrid-day-events {
+  @apply !important;
+  margin: 0.5rem auto;
+  max-width: 90%;
 }
 
-/* 휴일 날짜 숫자 스타일링 */
-.holiday-cell .fc-daygrid-day-number {
-  color: #DC2626 !important;
-  font-weight: 700;
+.printing .fc-event {
+  @apply !important;
+  margin: 2px auto;
+  padding: 2px 4px;
+  text-align: center;
 }
 
-/* 주말 날짜 숫자 스타일링 */
-.weekend-cell .fc-daygrid-day-number {
-  color: #64748B !important;
-  font-weight: 600;
-}
-
-/* 휴일 배경 이벤트 스타일 */
-.fc-bg-event.holiday-event {
-  background-color: rgba(220, 38, 38, 0.1) !important;
+.printing .fc-more-link {
+  @apply !important;
+  background: none;
   border: none;
+  margin: 0 auto;
 }
 
-/* 오늘 날짜가 휴일인 경우 */
-.fc-day-today.holiday-cell {
-  background-color: #FEE2E2 !important;
+.printing .fc-col-header-cell {
+  @apply !important;
+  text-align: center;
+  vertical-align: middle;
+  padding: 0.5rem 0;
 }
 
-/* 휴일 제목 스타일링 */
-.fc-event-title {
-  font-size: 0.75rem;
-  font-weight: 500;
+.printing .fc-scrollgrid {
+  @apply !important;
+  border-collapse: collapse;
+  width: 100%;
+  table-layout: fixed;
 }
 
-/* 달력 헤더 요일 스타일링 */
-.fc-col-header-cell.fc-day {
-  background-color: #F8FAFC;
-  font-weight: 600;
-}
-
-/* 일요일 헤더 */
-.fc-col-header-cell.fc-day:first-child {
-  color: #DC2626;
-}
-
-/* 토요일 헤더 */
-.fc-col-header-cell.fc-day:last-child {
-  color: #2563EB;
+.printing .fc-scrollgrid td {
+  @apply !important;
+  border: 1px solid #ddd;
 } 

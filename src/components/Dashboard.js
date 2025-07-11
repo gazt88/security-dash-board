@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import CalendarGrid from './CalendarGrid';
 import StatusLegend from './StatusLegend';
 import AddEventModal from './AddEventModal';
 import ShareModal from './ShareModal';
 import DutyScheduleModal from './DutyScheduleModal';
-import { Plus, Share2, Shield } from 'lucide-react';
+import { Plus, Share2, Shield, Download } from 'lucide-react';
 
 const Dashboard = ({ scheduleData, onScheduleUpdate, onAddEvent, onEditEvent, onDeleteEvent }) => {
   const [selectedDate, setSelectedDate] = useState(null);
@@ -13,6 +13,7 @@ const Dashboard = ({ scheduleData, onScheduleUpdate, onAddEvent, onEditEvent, on
   const [showShareModal, setShowShareModal] = useState(false);
   const [showDutyModal, setShowDutyModal] = useState(false);
   const [selectedEventForEdit, setSelectedEventForEdit] = useState(null);
+  const calendarRef = useRef(null);
 
   const handleDateClick = (dateInfo) => {
     setSelectedDate(dateInfo);
@@ -32,6 +33,12 @@ const Dashboard = ({ scheduleData, onScheduleUpdate, onAddEvent, onEditEvent, on
 
   const handleDutyClick = () => {
     setShowDutyModal(true);
+  };
+
+  const handleExportPDF = async () => {
+    if (calendarRef.current) {
+      await calendarRef.current.exportToPDF();
+    }
   };
 
   const handleDutyScheduleGenerate = (dutyData) => {
@@ -65,7 +72,6 @@ const Dashboard = ({ scheduleData, onScheduleUpdate, onAddEvent, onEditEvent, on
   };
 
   const handleEventAdd = (eventData) => {
-    // ID 생성
     const newEvent = {
       ...eventData,
       id: Date.now().toString()
@@ -97,75 +103,94 @@ const Dashboard = ({ scheduleData, onScheduleUpdate, onAddEvent, onEditEvent, on
 
   return (
     <div className="space-y-6">
-      {/* 대시보드 헤더 */}
+      {/* 상단 버튼 영역 */}
       <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-text-dark">팀 일정 캘린더</h2>
-          <p className="text-gray-600 mt-1">
-            {scheduleData.length > 0 
-              ? `총 ${scheduleData.length}개의 일정이 등록되어 있습니다.`
-              : '일정을 추가해보세요!'
-            }
-          </p>
-        </div>
-        
-        <div className="flex space-x-3">
-          <button
-            onClick={handleDutyClick}
-            className="bg-status-duty text-white px-6 py-2 rounded-md hover:bg-orange-600 transition-colors font-medium flex items-center space-x-2"
-          >
-            <Shield className="w-4 h-4" />
-            <span>당직 넣기</span>
-          </button>
-          <button
-            onClick={handleShareClick}
-            className="bg-accent-yellow text-white px-6 py-2 rounded-md hover:bg-yellow-500 transition-colors font-medium flex items-center space-x-2"
-          >
-            <Share2 className="w-4 h-4" />
-            <span>공유</span>
-          </button>
+        <div className="flex items-center space-x-4">
           <button
             onClick={handleAddClick}
-            className="bg-primary text-white px-6 py-2 rounded-md hover:bg-red-600 transition-colors font-medium flex items-center space-x-2"
+            className="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-red-600 transition-colors"
           >
-            <Plus className="w-4 h-4" />
-            <span>일정 추가</span>
+            <Plus className="w-5 h-5 mr-2" />
+            일정 추가
+          </button>
+          
+          <button
+            onClick={handleDutyClick}
+            className="inline-flex items-center px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors"
+          >
+            <Shield className="w-5 h-5 mr-2" />
+            당직 생성
+          </button>
+          
+          <button
+            onClick={handleShareClick}
+            className="inline-flex items-center px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+          >
+            <Share2 className="w-5 h-5 mr-2" />
+            공유하기
+          </button>
+
+          <button
+            onClick={handleExportPDF}
+            className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+          >
+            <Download className="w-5 h-5 mr-2" />
+            PDF 내보내기
           </button>
         </div>
+
+        <select
+          value={filterBy}
+          onChange={(e) => setFilterBy(e.target.value)}
+          className="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-primary"
+        >
+          <option value="all">전체</option>
+          <option value="annual">연차</option>
+          <option value="half">반차</option>
+          <option value="duty">당직</option>
+          <option value="meeting">회의</option>
+          <option value="business">외근/출장</option>
+          <option value="weekly">주간간담회</option>
+          <option value="monthly">월간간담회</option>
+        </select>
       </div>
 
-      {/* 필터 및 범례 */}
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-text-dark">일정 필터</h3>
-          <select
-            value={filterBy}
-            onChange={(e) => setFilterBy(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-primary"
-          >
-            <option value="all">전체</option>
-            <option value="annual">연차</option>
-            <option value="half">반차</option>
-            <option value="duty">당직</option>
-            <option value="meeting">회의</option>
-            <option value="business">외근/출장</option>
-            <option value="weekly">주간간담회</option>
-            <option value="monthly">월간간담회</option>
-          </select>
-        </div>
-        
-        <StatusLegend />
-      </div>
-
-      {/* 캘린더 */}
+      {/* 캘린더 영역 */}
       <div className="bg-white rounded-lg shadow-sm p-6">
         <CalendarGrid 
+          ref={calendarRef}
           events={filteredEvents}
           onDateClick={handleDateClick}
         />
       </div>
 
-      {/* 일정 상세 모달 */}
+      {/* 상태 범례 */}
+      <div className="bg-white rounded-lg shadow-sm p-6">
+        <StatusLegend />
+      </div>
+
+      {/* 모달 */}
+      {showAddModal && (
+        <AddEventModal
+          onClose={() => setShowAddModal(false)}
+          onAdd={handleEventAdd}
+        />
+      )}
+
+      {showShareModal && (
+        <ShareModal
+          onClose={() => setShowShareModal(false)}
+          scheduleData={scheduleData}
+        />
+      )}
+
+      {showDutyModal && (
+        <DutyScheduleModal
+          onClose={() => setShowDutyModal(false)}
+          onGenerate={handleDutyScheduleGenerate}
+        />
+      )}
+
       {selectedDate && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
@@ -184,43 +209,20 @@ const Dashboard = ({ scheduleData, onScheduleUpdate, onAddEvent, onEditEvent, on
             <div className="space-y-3">
               {selectedDate.events.map((event, index) => (
                 <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <div className="flex items-center space-x-3">
-                    <div 
-                      className={`w-3 h-3 rounded-full ${
-                        event.type === 'annual' ? 'bg-status-annual' :
-                        event.type === 'half' ? 'bg-status-half' :
-                        event.type === 'duty' ? 'bg-status-duty' :
-                        event.type === 'meeting' ? 'bg-status-meeting' :
-                        event.type === 'business' ? 'bg-status-business' :
-                        event.type === 'weekly' ? 'bg-status-weekly' :
-                        event.type === 'monthly' ? 'bg-status-monthly' :
-                        'bg-gray-500'
-                      }`}
-                    />
-                    <div>
-                      <span className="font-medium">{event.name}</span>
-                      <div className="text-sm text-gray-600">
-                        {event.type === 'annual' ? '연차' :
-                         event.type === 'half' ? '반차' :
-                         event.type === 'duty' ? '당직' :
-                         event.type === 'meeting' ? '회의' :
-                         event.type === 'business' ? '외근/출장' :
-                         event.type === 'weekly' ? '주간간담회' :
-                         event.type === 'monthly' ? '월간간담회' :
-                         '기타'}
-                      </div>
-                    </div>
+                  <div>
+                    <span className="font-medium">{event.name}</span>
+                    <p className="text-sm text-gray-600">{event.description}</p>
                   </div>
                   <div className="flex space-x-2">
                     <button
                       onClick={() => handleEditClick(event)}
-                      className="text-blue-600 hover:text-blue-800 text-sm"
+                      className="text-blue-600 hover:text-blue-800"
                     >
-                      편집
+                      수정
                     </button>
                     <button
                       onClick={() => handleEventDelete(event.id)}
-                      className="text-red-600 hover:text-red-800 text-sm"
+                      className="text-red-600 hover:text-red-800"
                     >
                       삭제
                     </button>
@@ -230,40 +232,6 @@ const Dashboard = ({ scheduleData, onScheduleUpdate, onAddEvent, onEditEvent, on
             </div>
           </div>
         </div>
-      )}
-
-      {/* 일정 추가 모달 */}
-      {showAddModal && (
-        <AddEventModal
-          onClose={() => setShowAddModal(false)}
-          onAdd={handleEventAdd}
-        />
-      )}
-
-      {/* 일정 편집 모달 */}
-      {selectedEventForEdit && (
-        <AddEventModal
-          onClose={() => setSelectedEventForEdit(null)}
-          onAdd={handleEventEdit}
-          editData={selectedEventForEdit}
-          isEdit={true}
-        />
-      )}
-
-      {/* 당직 생성 모달 */}
-      {showDutyModal && (
-        <DutyScheduleModal
-          onClose={() => setShowDutyModal(false)}
-          onGenerate={handleDutyScheduleGenerate}
-        />
-      )}
-
-      {/* 공유 모달 */}
-      {showShareModal && (
-        <ShareModal
-          onClose={() => setShowShareModal(false)}
-          scheduleData={scheduleData}
-        />
       )}
     </div>
   );
