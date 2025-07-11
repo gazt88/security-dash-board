@@ -88,95 +88,95 @@
 
 /* PDF 출력용 스타일 */
 .printing {
-  @apply !important;
-  width: 100%;
-  max-width: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
 }
 
 .printing .fc {
-  @apply !important;
-  background-color: white;
-  border: none;
-  box-shadow: none;
-  margin: 0 auto;
+  background-color: white !important;
+  border: none !important;
+  box-shadow: none !important;
+  margin: 0 auto !important;
 }
 
 .printing .fc-header-toolbar {
-  @apply !important;
-  margin-bottom: 1rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  margin-bottom: 1rem !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
 }
 
 .printing .fc-view-harness {
-  @apply !important;
-  height: auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  height: auto !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
 }
 
 .printing .fc-daygrid-day {
-  @apply !important;
-  min-height: 120px;
-  vertical-align: middle;
+  min-height: 120px !important;
+  vertical-align: middle !important;
 }
 
 .printing .fc-daygrid-day-frame {
-  @apply !important;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
 }
 
 .printing .fc-daygrid-day-top {
-  @apply !important;
-  justify-content: center;
-  padding-top: 0.5rem;
+  justify-content: center !important;
+  padding-top: 0.5rem !important;
 }
 
 .printing .fc-daygrid-day-events {
-  @apply !important;
-  margin: 0.5rem auto;
-  max-width: 90%;
+  margin: 0.5rem auto !important;
+  max-width: 90% !important;
 }
 
 .printing .fc-event {
-  @apply !important;
-  margin: 2px auto;
-  padding: 2px 4px;
-  text-align: center;
+  margin: 2px auto !important;
+  padding: 2px 4px !important;
+  text-align: center !important;
 }
 
 .printing .fc-more-link {
-  @apply !important;
-  background: none;
-  border: none;
-  margin: 0 auto;
+  background: none !important;
+  border: none !important;
+  margin: 0 auto !important;
 }
 
 .printing .fc-col-header-cell {
-  @apply !important;
-  text-align: center;
-  vertical-align: middle;
-  padding: 0.5rem 0;
+  text-align: center !important;
+  vertical-align: middle !important;
+  padding: 0.5rem 0 !important;
 }
 
 .printing .fc-scrollgrid {
-  @apply !important;
-  border-collapse: collapse;
-  width: 100%;
-  table-layout: fixed;
+  border-collapse: collapse !important;
+  width: 100% !important;
+  table-layout: fixed !important;
 }
 
 .printing .fc-scrollgrid td {
-  @apply !important;
-  border: 1px solid #ddd;
+  border: 1px solid #ddd !important;
+}
+
+.printing .fc-scrollgrid-section > td {
+  border: 1px solid #ddd !important;
+}
+
+.printing .fc-theme-standard td {
+  border: 1px solid #ddd !important;
+}
+
+.printing .fc-theme-standard th {
+  border: 1px solid #ddd !important;
+  padding: 8px !important;
 } 
