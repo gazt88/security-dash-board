@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 기본 스타일 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Noto Sans KR', 'Pretendard', sans-serif;
+  background-color: #F9FAFB;
+  color: #4B3B39;
+}
+
+/* FullCalendar 커스텀 스타일 */
+.fc-theme-standard td, .fc-theme-standard th {
+  border-color: #E5E7EB;
+}
+
+.fc-daygrid-event {
+  border-radius: 4px;
+  border: none;
+  margin: 1px;
+}
+
+.fc-toolbar-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #4B3B39;
+}
+
+.fc-button-primary {
+  background-color: #EF3A47;
+  border-color: #EF3A47;
+}
+
+.fc-button-primary:hover {
+  background-color: #DC2626;
+  border-color: #DC2626;
+} 
