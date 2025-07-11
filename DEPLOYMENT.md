@@ -18,8 +18,8 @@ git push origin development
 # 테스트 배포 실행
 npm run deploy:test
 
-# 또는 직접 명령어
-vercel --preview
+# 또는 직접 명령어  
+vercel
 ```
 
 ### 3단계: 테스트 확인 ✅
