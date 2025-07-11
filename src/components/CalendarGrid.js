@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import { getHolidayEvents, isHoliday } from '../utils/holidays';
 
 const CalendarGrid = ({ events, onDateClick }) => {
   const calendarRef = useRef(null);
@@ -20,6 +21,12 @@ const CalendarGrid = ({ events, onDateClick }) => {
       originalEvent: event
     }
   }));
+
+  // 휴일 이벤트 가져오기
+  const holidayEvents = getHolidayEvents();
+
+  // 모든 이벤트 합치기 (휴일 + 일반 이벤트)
+  const allEvents = [...holidayEvents, ...formattedEvents];
 
   function getTypeLabel(type) {
     switch (type) {
@@ -87,7 +94,7 @@ const CalendarGrid = ({ events, onDateClick }) => {
           center: 'title',
           right: 'dayGridMonth'
         }}
-        events={formattedEvents}
+        events={allEvents}
         dateClick={handleDateClick}
         eventClick={handleEventClick}
         height="auto"
@@ -106,7 +113,24 @@ const CalendarGrid = ({ events, onDateClick }) => {
         moreLinkText="더보기"
         dayMaxEvents={3}
         eventClassNames="cursor-pointer"
-        dayCellClassNames="hover:bg-gray-50 cursor-pointer"
+        dayCellClassNames={(arg) => {
+          const date = arg.date;
+          const holiday = isHoliday(date);
+          const dayOfWeek = date.getDay();
+          const isWeekendDay = dayOfWeek === 0 || dayOfWeek === 6;
+          
+          let classes = ['hover:bg-gray-50', 'cursor-pointer'];
+          
+          if (holiday) {
+            classes.push('holiday-cell');
+          }
+          
+          if (isWeekendDay) {
+            classes.push('weekend-cell');
+          }
+          
+          return classes.join(' ');
+        }}
         aspectRatio={1.8}
         eventOrder="order,start,title"
         eventOrderStrict={true}

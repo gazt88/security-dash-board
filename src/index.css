@@ -40,4 +40,65 @@ body {
 .fc-button-primary:hover {
   background-color: #DC2626;
   border-color: #DC2626;
+}
+
+/* 휴일 및 주말 스타일링 */
+.holiday-cell {
+  background-color: #FEF2F2 !important;
+  color: #DC2626 !important;
+}
+
+.weekend-cell {
+  background-color: #F8FAFC !important;
+  color: #64748B !important;
+}
+
+.holiday-event {
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+/* 휴일 날짜 숫자 스타일링 */
+.holiday-cell .fc-daygrid-day-number {
+  color: #DC2626 !important;
+  font-weight: 700;
+}
+
+/* 주말 날짜 숫자 스타일링 */
+.weekend-cell .fc-daygrid-day-number {
+  color: #64748B !important;
+  font-weight: 600;
+}
+
+/* 휴일 배경 이벤트 스타일 */
+.fc-bg-event.holiday-event {
+  background-color: rgba(220, 38, 38, 0.1) !important;
+  border: none;
+}
+
+/* 오늘 날짜가 휴일인 경우 */
+.fc-day-today.holiday-cell {
+  background-color: #FEE2E2 !important;
+}
+
+/* 휴일 제목 스타일링 */
+.fc-event-title {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* 달력 헤더 요일 스타일링 */
+.fc-col-header-cell.fc-day {
+  background-color: #F8FAFC;
+  font-weight: 600;
+}
+
+/* 일요일 헤더 */
+.fc-col-header-cell.fc-day:first-child {
+  color: #DC2626;
+}
+
+/* 토요일 헤더 */
+.fc-col-header-cell.fc-day:last-child {
+  color: #2563EB;
 } 

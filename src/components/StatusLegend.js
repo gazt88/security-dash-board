@@ -11,14 +11,38 @@ const StatusLegend = () => {
     { type: 'monthly', label: '월간간담회', color: 'bg-status-monthly' }
   ];
 
+  const holidayTypes = [
+    { type: 'public', label: '🏮 공휴일', color: 'bg-red-600' },
+    { type: 'weekend', label: '🏢 주말', color: 'bg-slate-500' }
+  ];
+
   return (
-    <div className="flex flex-wrap gap-6">
-      {statusTypes.map(({ type, label, color }) => (
-        <div key={type} className="flex items-center space-x-2">
-          <div className={`w-4 h-4 rounded-full ${color}`} />
-          <span className="text-sm font-medium text-text-dark">{label}</span>
+    <div className="space-y-4">
+      {/* 일정 범례 */}
+      <div>
+        <h4 className="text-sm font-semibold text-text-dark mb-2">일정 구분</h4>
+        <div className="flex flex-wrap gap-6">
+          {statusTypes.map(({ type, label, color }) => (
+            <div key={type} className="flex items-center space-x-2">
+              <div className={`w-4 h-4 rounded-full ${color}`} />
+              <span className="text-sm font-medium text-text-dark">{label}</span>
+            </div>
+          ))}
         </div>
-      ))}
+      </div>
+
+      {/* 휴일 범례 */}
+      <div>
+        <h4 className="text-sm font-semibold text-text-dark mb-2">휴일 구분</h4>
+        <div className="flex flex-wrap gap-6">
+          {holidayTypes.map(({ type, label, color }) => (
+            <div key={type} className="flex items-center space-x-2">
+              <div className={`w-4 h-4 rounded-full ${color}`} />
+              <span className="text-sm font-medium text-text-dark">{label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
