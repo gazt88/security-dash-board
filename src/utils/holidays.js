@@ -426,7 +426,7 @@ export const getHolidayEvents = (year = null) => {
           borderColor: getHolidayColor(holiday.type),
           textColor: 'white',
           display: 'background',
-          classNames: ['holiday-event'],
+          classNames: ['opacity-20'],
           extendedProps: {
             type: 'holiday',
             holidayType: holiday.type,
@@ -538,7 +538,8 @@ END:VEVENT
 END:VCALENDAR`;
 };
 
-export default {
+// Default export
+const holidaysUtil = {
   HOLIDAY_TYPES,
   isHoliday,
   isWeekday,
@@ -548,4 +549,6 @@ export default {
   getHolidaysInRange,
   isWeekend,
   generateICalString
-}; 
+};
+
+export default holidaysUtil; 

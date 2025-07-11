@@ -6,13 +6,12 @@ import ShareModal from './ShareModal';
 import DutyScheduleModal from './DutyScheduleModal';
 import { Plus, Share2, Shield, Download } from 'lucide-react';
 
-const Dashboard = ({ scheduleData, onScheduleUpdate, onAddEvent, onEditEvent, onDeleteEvent }) => {
+const Dashboard = ({ scheduleData, onScheduleUpdate, onAddEvent, onDeleteEvent }) => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [filterBy, setFilterBy] = useState('all');
   const [showAddModal, setShowAddModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [showDutyModal, setShowDutyModal] = useState(false);
-  const [selectedEventForEdit, setSelectedEventForEdit] = useState(null);
   const calendarRef = useRef(null);
 
   const handleDateClick = (dateInfo) => {
@@ -42,7 +41,7 @@ const Dashboard = ({ scheduleData, onScheduleUpdate, onAddEvent, onEditEvent, on
   };
 
   const handleDutyScheduleGenerate = (dutyData) => {
-    const { teamMembers, year, month, weekdays, customHolidays } = dutyData;
+    const { teamMembers, year, month, weekdays } = dutyData;
     
     // 기존 당직 일정 제거 (해당 월만)
     const filteredScheduleData = scheduleData.filter(event => {
@@ -71,28 +70,18 @@ const Dashboard = ({ scheduleData, onScheduleUpdate, onAddEvent, onEditEvent, on
     setShowDutyModal(false);
   };
 
-  const handleEventAdd = (eventData) => {
-    const newEvent = {
-      ...eventData,
-      id: Date.now().toString()
-    };
-    onAddEvent(newEvent);
+  const handleEventSave = (event) => {
+    onAddEvent(event);
     setShowAddModal(false);
   };
-
-  const handleEventEdit = (eventData) => {
-    onEditEvent(selectedEventForEdit.id, eventData);
-    setSelectedEventForEdit(null);
-    setSelectedDate(null);
-  };
-
+  
   const handleEventDelete = (eventId) => {
     onDeleteEvent(eventId);
     setSelectedDate(null);
   };
 
   const handleEditClick = (event) => {
-    setSelectedEventForEdit(event);
+    // setSelectedEventForEdit(event); // This line is removed
     setSelectedDate(null);
   };
 
@@ -173,7 +162,7 @@ const Dashboard = ({ scheduleData, onScheduleUpdate, onAddEvent, onEditEvent, on
       {showAddModal && (
         <AddEventModal
           onClose={() => setShowAddModal(false)}
-          onAdd={handleEventAdd}
+          onAdd={handleEventSave}
         />
       )}
 

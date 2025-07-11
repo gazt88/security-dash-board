@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Shield, Plus, Minus, Calendar, Users, AlertTriangle } from 'lucide-react';
-import { getWeekdaysInMonth, getHolidaysInMonth, isWeekend, isHoliday } from '../utils/holidays';
+import { getWeekdaysInMonth, getHolidaysInMonth } from '../utils/holidays';
 
 const DutyScheduleModal = ({ onClose, onGenerate }) => {
   // 로컬스토리지에서 팀원 목록 불러오기

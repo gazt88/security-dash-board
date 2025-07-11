@@ -88,81 +88,63 @@ const CalendarGrid = forwardRef(({ events, onDateClick, isPrinting = false }, re
 
   // PDF 내보내기 함수
   const exportToPDF = async () => {
-    const calendarElement = calendarRef.current.elRef.current;
-    
-    // 캘린더의 현재 크기 저장
-    const originalWidth = calendarElement.style.width;
-    const originalHeight = calendarElement.style.height;
-    const originalStyle = calendarElement.getAttribute('style');
-    
+    // FullCalendar 인스턴스 참조
+    const calendarApi = calendarRef.current.getApi();
+
+    // 1) 기존 옵션 백업
+    const originalAspectRatio = calendarApi.getOption('aspectRatio');
+
+    // 2) PDF 출력 시 셀을 큼직하게 만들기 위해 aspectRatio를 0.6으로 임시 변경 (값이 작을수록 세로로 더 넓어짐)
+    calendarApi.setOption('aspectRatio', 0.6);
+    // 필요시 아래처럼 height도 강제로 지정 가능 (예: calendarApi.setOption('height', 700);)
+    calendarApi.updateSize();
+
+    // 3) 레이아웃이 반영될 시간을 조금 줌
+    await new Promise((resolve) => setTimeout(resolve, 150));
+
+    const calendarEl = calendarRef.current.getApi().el;
+    const containerEl = calendarEl.closest('.calendar-container');
+
+    // 프린팅 클래스 임시 추가
+    containerEl.classList.add('printing');
+
     try {
-      // PDF 출력을 위한 스타일 설정
-      calendarElement.style.width = '1200px';
-      calendarElement.style.height = '850px';
-      calendarElement.style.margin = '0';
-      calendarElement.style.padding = '0';
-      calendarElement.style.overflow = 'hidden';
-      
-      // 캘린더 컨테이너에 프린팅 클래스 추가
-      calendarElement.closest('.calendar-container').classList.add('printing');
-      
-      // html2canvas 옵션
-      const canvas = await html2canvas(calendarElement, {
+      const canvas = await html2canvas(calendarEl, {
         scale: 2,
         useCORS: true,
         logging: false,
         allowTaint: true,
         backgroundColor: '#ffffff',
-        windowWidth: 1200,
-        windowHeight: 850,
-        foreignObjectRendering: true,
-        removeContainer: false,
-        onclone: (clonedDoc) => {
-          const clonedElement = clonedDoc.querySelector('.fc');
-          if (clonedElement) {
-            clonedElement.style.width = '1200px';
-            clonedElement.style.height = '850px';
-          }
-        }
       });
-      
-      // A4 가로 방향 PDF 생성
+
+      // A4 가로(Landscape) PDF 생성 – 반드시 가로로 출력
       const pdf = new jsPDF('l', 'mm', 'a4');
       
-      // A4 크기 및 여백 설정 (mm)
-      const pageWidth = 297;
-      const pageHeight = 210;
-      const margin = 20;
-      
-      // 여백을 제외한 실제 이미지 크기 계산
-      const availableWidth = pageWidth - (margin * 2);
-      const availableHeight = pageHeight - (margin * 2);
-      
-      // 이미지 비율 계산
-      const imageRatio = canvas.height / canvas.width;
-      const pageRatio = availableHeight / availableWidth;
-      
-      let imgWidth, imgHeight;
-      
-      if (imageRatio > pageRatio) {
-        // 높이에 맞춤
-        imgHeight = availableHeight;
-        imgWidth = (canvas.width * imgHeight) / canvas.height;
-      } else {
-        // 너비에 맞춤
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+
+      const margin = 5; // 여백 최소화
+
+      const availableWidth = pageWidth - margin * 2;
+      const availableHeight = pageHeight - margin * 2;
+
+      // 항상 페이지 높이에 맞추어 스케일 – 상·하를 꽉 채움
+      let imgHeight = availableHeight;
+      let imgWidth = imgHeight * (canvas.width / canvas.height);
+
+      // 너비가 페이지를 초과하면 다시 조정
+      if (imgWidth > availableWidth) {
         imgWidth = availableWidth;
-        imgHeight = (canvas.height * imgWidth) / canvas.width;
+        imgHeight = imgWidth * (canvas.height / canvas.width);
       }
-      
-      // 중앙 정렬을 위한 X, Y 좌표 계산
+
+      // 중앙 정렬 좌표
       const x = margin + (availableWidth - imgWidth) / 2;
       const y = margin + (availableHeight - imgHeight) / 2;
       
-      // 캔버스를 이미지로 변환하여 PDF에 추가
       const imgData = canvas.toDataURL('image/png', 1.0);
       pdf.addImage(imgData, 'PNG', x, y, imgWidth, imgHeight);
       
-      // PDF 저장
       const today = new Date().toLocaleDateString('ko-KR', {
         year: 'numeric',
         month: '2-digit',
@@ -172,17 +154,14 @@ const CalendarGrid = forwardRef(({ events, onDateClick, isPrinting = false }, re
       pdf.save(`정보보안팀_일정_${today}.pdf`);
     } catch (error) {
       console.error('PDF 생성 중 오류 발생:', error);
+      alert('PDF 생성에 실패했습니다. 콘솔 로그를 확인해주세요.');
     } finally {
-      // 원래 스타일로 복원
-      if (originalStyle) {
-        calendarElement.setAttribute('style', originalStyle);
-      } else {
-        calendarElement.style.width = originalWidth;
-        calendarElement.style.height = originalHeight;
-      }
-      
       // 프린팅 클래스 제거
-      calendarElement.closest('.calendar-container').classList.remove('printing');
+      containerEl.classList.remove('printing');
+
+      // 4) 원래 옵션 복원
+      calendarApi.setOption('aspectRatio', originalAspectRatio);
+      calendarApi.updateSize();
     }
   };
 
@@ -192,7 +171,7 @@ const CalendarGrid = forwardRef(({ events, onDateClick, isPrinting = false }, re
   }));
 
   return (
-    <div className={`calendar-container ${isPrinting ? 'printing' : ''}`}>
+    <div className={`calendar-container w-full ${isPrinting ? 'printing' : ''}`}>
       <FullCalendar
         ref={calendarRef}
         plugins={[dayGridPlugin, interactionPlugin]}
@@ -230,11 +209,11 @@ const CalendarGrid = forwardRef(({ events, onDateClick, isPrinting = false }, re
           let classes = ['hover:bg-gray-50', 'cursor-pointer'];
           
           if (dayOfWeek === 0 || dayOfWeek === 6) {
-            classes.push('weekend-cell');
+            classes.push('text-red-600', 'bg-red-50');
           }
           
           if (holiday) {
-            classes.push('holiday-cell');
+            classes.push('text-red-600', 'bg-red-50');
           }
           
           return classes;
