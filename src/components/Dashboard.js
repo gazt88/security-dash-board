@@ -82,13 +82,16 @@ const Dashboard = () => {
       await Promise.all(weekdays.map((w, i) => {
         const memberIndex = i % teamMembers.length;
         // w.dateString 또는 w.date 지원
-        const shiftDate = w.dateString || w.date;
+        const shiftDate = (w.dateString || w.date || '').slice(0, 10); // YYYY-MM-DD 강제
         return addRoster({
           shift_date: shiftDate,
           assignee_name: teamMembers[memberIndex],
           status: 'scheduled'
         });
       }));
+      // 생성 후 강제 fetch로 roster 갱신
+      const res = await getRoster();
+      setRoster(res.data || []);
       setShowDutyModal(false);
       alert('당직표가 성공적으로 생성되었습니다!');
     } catch (e) {
