@@ -2,11 +2,24 @@ import React, { useState, useEffect, useRef } from 'react';
 import Dashboard from './components/Dashboard';
 import { v4 as uuidv4 } from 'uuid';
 import { getEvents } from './api/supabase';
+import { supabase } from './utils/supabase';
 
 function App() {
   const [scheduleData, setScheduleData] = useState([]);
   const [pendingData, setPendingData] = useState([]); // 임시 입력 데이터
   const pollingRef = useRef();
+
+  if (!supabase) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="bg-white p-8 rounded shadow text-center">
+          <h2 className="text-2xl font-bold mb-4 text-red-600">환경설정 오류</h2>
+          <p className="mb-2">Supabase 환경변수가 누락되어 앱을 실행할 수 없습니다.</p>
+          <p className="text-gray-500">관리자에게 문의하거나 .env(.local)에 REACT_APP_SUPABASE_URL, REACT_APP_SUPABASE_ANON_KEY를 정확히 입력하세요.</p>
+        </div>
+      </div>
+    );
+  }
 
   // 일정 데이터 불러오기 (Supabase 직접 호출)
   const fetchSchedule = async () => {
