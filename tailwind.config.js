@@ -6,16 +6,10 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#EF3A47',
-        accent: '#F5A623',
-        'text-dark': '#4B3B39',
-        'status-annual': '#F87171',
-        'status-half': '#FACC15',
-        'status-duty': '#F97316',
-        'status-meeting': '#60A5FA',
-        'status-business': '#A855F7',
-        'status-weekly': '#9333EA',
-        'status-monthly': '#0891B2'
+        primary: { 500: '#5C4C4D', 600: '#4A3D3E' },
+        accent:  { yellow: '#F6AB00', red: '#FF4B07' },
+        neutral: { 800: '#4C6971' },
+        base:    { white: '#FFFFFF' }
       },
       maxWidth: {
         'dashboard': '1280px'
