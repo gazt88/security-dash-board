@@ -27,6 +27,16 @@ export function subscribeEvents(onChange) {
     .subscribe();
 }
 
+// 이벤트 전체 삭제
+export async function deleteAllEvents() {
+  return supabase.from('events').delete().neq('id', '');
+}
+
+// 여러 이벤트 삽입
+export async function insertEvents(events) {
+  return supabase.from('events').insert(events);
+}
+
 // 로스터 CRUD
 export async function getRoster() {
   return supabase.from('on_call_shift').select('*').order('shift_date', { ascending: true });

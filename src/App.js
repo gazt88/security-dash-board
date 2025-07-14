@@ -1,17 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Dashboard from './components/Dashboard';
 import { v4 as uuidv4 } from 'uuid';
+import { getEvents } from './api/supabase';
 
 function App() {
   const [scheduleData, setScheduleData] = useState([]);
   const [pendingData, setPendingData] = useState([]); // 임시 입력 데이터
   const pollingRef = useRef();
 
-  // 일정 데이터 불러오기 (API)
+  // 일정 데이터 불러오기 (Supabase 직접 호출)
   const fetchSchedule = async () => {
     try {
-      const res = await fetch('/api/schedule');
-      const data = await res.json();
+      const { data, error } = await getEvents();
+      if (error) throw error;
       setScheduleData(Array.isArray(data) ? data : []);
       setPendingData(Array.isArray(data) ? data : []); // 불러올 때 임시데이터도 동기화
     } catch (e) {
@@ -52,19 +53,16 @@ function App() {
     );
     setScheduleData(dataToSave);
     try {
-      const res = await fetch('/api/schedule', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ value: dataToSave })
-      });
-      if (res.ok) {
-        alert('DB 저장에 성공했습니다!');
-      } else {
-        const err = await res.json();
-        alert('DB 저장 실패: ' + (err.error || '알 수 없는 오류'));
+      // 기존 데이터 삭제 후 새 데이터 삽입 (supabase.js에 맞게 구현 필요)
+      // delete all events
+      await import('./api/supabase').then(mod => mod.deleteAllEvents && mod.deleteAllEvents());
+      // insert new events
+      if (dataToSave.length > 0) {
+        await import('./api/supabase').then(mod => mod.insertEvents && mod.insertEvents(dataToSave));
       }
+      alert('DB 저장에 성공했습니다!');
     } catch (e) {
-      alert('DB 저장 중 네트워크 오류가 발생했습니다.');
+      alert('DB 저장 실패: ' + (e.message || '알 수 없는 오류'));
     }
   };
 
