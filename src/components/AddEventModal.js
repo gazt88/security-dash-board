@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 
-const AddEventModal = ({ onClose, onAdd, editData, isEdit = false }) => {
+const AddEventModal = ({ onClose, onAdd, onDelete, editData, isEdit = false }) => {
   const [formData, setFormData] = useState({
     name: '',
     type: 'annual',
@@ -26,8 +26,13 @@ const AddEventModal = ({ onClose, onAdd, editData, isEdit = false }) => {
       alert('이름과 날짜를 입력해주세요.');
       return;
     }
-
     onAdd(formData);
+  };
+
+  const handleDelete = () => {
+    if (window.confirm('정말 삭제하시겠습니까?')) {
+      onDelete && onDelete(editData);
+    }
   };
 
   const handleChange = (e) => {
@@ -149,6 +154,15 @@ const AddEventModal = ({ onClose, onAdd, editData, isEdit = false }) => {
             >
               취소
             </button>
+            {isEdit && (
+              <button
+                type="button"
+                onClick={handleDelete}
+                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
+              >
+                삭제
+              </button>
+            )}
             <button
               type="submit"
               className="px-4 py-2 bg-primary text-white rounded-md hover:bg-red-600 transition-colors"

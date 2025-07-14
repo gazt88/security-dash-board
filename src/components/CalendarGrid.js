@@ -6,23 +6,42 @@ import { getHolidayEvents, isHoliday } from '../utils/holidays';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
-const CalendarGrid = forwardRef(({ events, onDateClick, isPrinting = false }, ref) => {
+// events, roster, holidays를 모두 props로 받아서 FullCalendar에 표시
+const CalendarGrid = forwardRef(({ events, roster, holidays, onDateClick, isPrinting = false }, ref) => {
   const calendarRef = useRef(null);
 
   // 이벤트 데이터를 FullCalendar 형식으로 변환
-  const formattedEvents = events.map(event => ({
-    title: event.type === 'duty' ? `🛡️ ${event.name}` : `${event.name} (${getTypeLabel(event.type)})`,
-    start: event.date,
-    backgroundColor: getTypeColor(event.type),
-    borderColor: getTypeColor(event.type),
-    textColor: 'white',
-    order: event.type === 'duty' ? 0 : 1,
-    extendedProps: {
-      name: event.name,
-      type: event.type,
-      originalEvent: event
-    }
-  }));
+  const formattedEvents = [
+    ...(events || []).map(event => ({
+      id: event.id,
+      title: event.title,
+      start: event.start_at || event.date,
+      end: event.end_at || event.date,
+      backgroundColor: '#60A5FA', // 기본 색상(회의 등)
+      borderColor: '#60A5FA',
+      textColor: 'white',
+      extendedProps: { ...event, type: 'event' }
+    })),
+    ...(roster || []).map(shift => ({
+      id: shift.id,
+      title: `🛡️ ${shift.assignee_name || shift.user_id}`,
+      start: shift.shift_date,
+      backgroundColor: '#F97316',
+      borderColor: '#F97316',
+      textColor: 'white',
+      extendedProps: { ...shift, type: 'duty' }
+    })),
+    ...(holidays || []).map(holiday => ({
+      id: holiday.id,
+      title: `🎌 ${holiday.name}`,
+      start: holiday.date,
+      backgroundColor: '#F87171',
+      borderColor: '#F87171',
+      textColor: 'white',
+      extendedProps: { ...holiday, type: 'holiday' },
+      display: 'background'
+    }))
+  ];
 
   // 휴일 이벤트 가져오기
   const holidayEvents = getHolidayEvents();
@@ -30,60 +49,21 @@ const CalendarGrid = forwardRef(({ events, onDateClick, isPrinting = false }, re
   // 모든 이벤트 합치기 (휴일 + 일반 이벤트)
   const allEvents = [...holidayEvents, ...formattedEvents];
 
-  function getTypeLabel(type) {
-    switch (type) {
-      case 'annual': return '연차';
-      case 'half': return '반차';
-      case 'duty': return '당직';
-      case 'meeting': return '회의';
-      case 'business': return '외근/출장';
-      case 'weekly': return '주간간담회';
-      case 'monthly': return '월간간담회';
-      default: return '';
-    }
-  }
-
-  function getTypeColor(type) {
-    switch (type) {
-      case 'annual': return '#F87171';
-      case 'half': return '#FACC15';
-      case 'duty': return '#F97316';
-      case 'meeting': return '#60A5FA';
-      case 'business': return '#A855F7';
-      case 'weekly': return '#9333EA';
-      case 'monthly': return '#0891B2';
-      default: return '#6B7280';
-    }
-  }
-
   const handleDateClick = (info) => {
     if (isPrinting) return;
     const dateStr = info.dateStr;
-    const dateEvents = events.filter(event => 
-      event.date === dateStr || 
-      (event.startDate && event.endDate && 
-       new Date(dateStr) >= new Date(event.startDate) && 
-       new Date(dateStr) <= new Date(event.endDate))
-    );
-
-    if (dateEvents.length > 0) {
-      onDateClick({
-        dateStr,
-        events: dateEvents
-      });
-    }
+    // 해당 날짜의 모든 이벤트/당직/공휴일 모아 전달
+    const dateEvents = formattedEvents.filter(ev => ev.start === dateStr);
+    onDateClick({ dateStr, events: dateEvents });
   };
 
   const handleEventClick = (info) => {
     if (isPrinting) return;
     const event = info.event;
     const dateStr = event.startStr.split('T')[0];
-    const dateEvents = events.filter(e => e.date === dateStr);
-    
-    onDateClick({
-      dateStr,
-      events: dateEvents
-    });
+    // 해당 날짜의 모든 이벤트/당직/공휴일 모아 전달
+    const dateEvents = formattedEvents.filter(ev => ev.start === dateStr);
+    onDateClick({ dateStr, events: dateEvents });
   };
 
   // PDF 내보내기 함수
@@ -182,7 +162,7 @@ const CalendarGrid = forwardRef(({ events, onDateClick, isPrinting = false }, re
           center: 'title',
           right: 'dayGridMonth'
         }}
-        events={allEvents}
+        events={formattedEvents}
         dateClick={handleDateClick}
         eventClick={handleEventClick}
         height={isPrinting ? 850 : 'auto'}
@@ -204,22 +184,18 @@ const CalendarGrid = forwardRef(({ events, onDateClick, isPrinting = false }, re
         dayCellClassNames={(arg) => {
           const date = arg.date;
           const dayOfWeek = date.getDay();
-          const holiday = isHoliday(date);
-          
+          // 공휴일/주말 강조
           let classes = ['hover:bg-gray-50', 'cursor-pointer'];
-          
           if (dayOfWeek === 0 || dayOfWeek === 6) {
             classes.push('text-red-600', 'bg-red-50');
           }
-          
-          if (holiday) {
+          if ((holidays || []).some(h => h.date === date.toISOString().slice(0, 10))) {
             classes.push('text-red-600', 'bg-red-50');
           }
-          
           return classes;
         }}
         aspectRatio={isPrinting ? 1.4 : 1.8}
-        eventOrder="order,start,title"
+        eventOrder="start,title"
         eventOrderStrict={true}
         slotLabelFormat={{
           hour: '2-digit',
