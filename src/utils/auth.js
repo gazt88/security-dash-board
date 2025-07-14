@@ -1,4 +1,4 @@
-import { supabase } from '../api/supabase';
+import { supabase } from '../utils/supabase';
 
 // 현재 사용자 정보 가져오기
 export const getCurrentUser = async () => {

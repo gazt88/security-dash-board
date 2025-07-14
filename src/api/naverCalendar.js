@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { supabase } from './supabase';
+import { supabase } from '../utils/supabase';
 
 // 네이버 캘린더 일정 추가 (iCalendar 포맷)
 export async function addNaverSchedule(token, icalString) {

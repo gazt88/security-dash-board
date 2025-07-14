@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../api/supabase';
+import { supabase } from '../utils/supabase';
 
 const SettingsPage = () => {
   const [profile, setProfile] = useState({ email: '', name: '', role: '' });
