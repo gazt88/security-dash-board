@@ -73,20 +73,27 @@ const Dashboard = () => {
   // 당직 자동 생성
   const handleDutyScheduleGenerate = async (dutyData) => {
     const { teamMembers, year, month, weekdays } = dutyData;
-    // 해당 월 기존 당직 삭제
-    const monthStr = `${year}-${String(month).padStart(2, '0')}`;
-    const toDelete = roster.filter(r => r.shift_date.startsWith(monthStr));
-    for (const r of toDelete) await deleteRoster(r.id);
-    // 새 당직 생성
-    for (let i = 0; i < weekdays.length; i++) {
-      const memberIndex = i % teamMembers.length;
-      await addRoster({
-        shift_date: weekdays[i].dateString,
-        assignee_name: teamMembers[memberIndex],
-        status: 'scheduled'
-      });
+    try {
+      // 해당 월 기존 당직 삭제 (병렬 처리)
+      const monthStr = `${year}-${String(month).padStart(2, '0')}`;
+      const toDelete = roster.filter(r => r.shift_date.startsWith(monthStr));
+      await Promise.all(toDelete.map(r => deleteRoster(r.id)));
+      // 새 당직 생성 (병렬 처리)
+      await Promise.all(weekdays.map((w, i) => {
+        const memberIndex = i % teamMembers.length;
+        // w.dateString 또는 w.date 지원
+        const shiftDate = w.dateString || w.date;
+        return addRoster({
+          shift_date: shiftDate,
+          assignee_name: teamMembers[memberIndex],
+          status: 'scheduled'
+        });
+      }));
+      setShowDutyModal(false);
+      alert('당직표가 성공적으로 생성되었습니다!');
+    } catch (e) {
+      alert('당직표 생성 중 오류가 발생했습니다: ' + (e.message || '알 수 없는 오류'));
     }
-    setShowDutyModal(false);
   };
 
   // 일정 추가/수정/삭제
