@@ -4,7 +4,13 @@ export default async function handler(req, res) {
   if (req.method === 'GET') {
     const { data, error } = await supabase.from('schedules').select('*').order('date', { ascending: true });
     if (error) return res.status(500).json({ error: error.message });
-    res.status(200).json(data);
+    res.status(200).json({
+      data,
+      env: {
+        SUPABASE_URL: process.env.SUPABASE_URL,
+        SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY ? 'set' : 'unset'
+      }
+    });
   } else if (req.method === 'POST') {
     // 전체 덮어쓰기(간단 구현)
     const { value } = req.body;
