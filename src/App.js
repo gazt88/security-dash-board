@@ -51,11 +51,21 @@ function App() {
       event.id ? event : { ...event, id: uuidv4() }
     );
     setScheduleData(dataToSave);
-    await fetch('/api/schedule', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ value: dataToSave })
-    });
+    try {
+      const res = await fetch('/api/schedule', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ value: dataToSave })
+      });
+      if (res.ok) {
+        alert('DB 저장에 성공했습니다!');
+      } else {
+        const err = await res.json();
+        alert('DB 저장 실패: ' + (err.error || '알 수 없는 오류'));
+      }
+    } catch (e) {
+      alert('DB 저장 중 네트워크 오류가 발생했습니다.');
+    }
   };
 
   return (
