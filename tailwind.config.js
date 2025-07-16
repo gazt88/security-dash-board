@@ -1,8 +1,4 @@
-/** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    "./src/**/*.{js,jsx,ts,tsx}",
-  ],
   theme: {
     extend: {
       colors: {
@@ -10,14 +6,7 @@ module.exports = {
         accent:  { yellow: '#F6AB00', red: '#FF4B07' },
         neutral: { 800: '#4C6971' },
         base:    { white: '#FFFFFF' }
-      },
-      maxWidth: {
-        'dashboard': '1280px'
-      },
-      fontFamily: {
-        sans: ['Noto Sans KR', 'Pretendard', 'sans-serif']
       }
-    },
-  },
-  plugins: [],
-} 
+    }
+  }
+}; 

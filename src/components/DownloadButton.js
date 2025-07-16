@@ -1,8 +1,13 @@
 import React from 'react';
-import { Button } from './Button';
 
-export function DownloadButton({ onDownload, disabled }) {
-  return (
-    <Button onClick={onDownload} disabled={disabled} className="mt-4">PDF 다운로드</Button>
-  );
-} 
+const DownloadButton = ({ onClick, disabled }) => (
+  <button
+    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded font-semibold shadow disabled:opacity-50"
+    onClick={onClick}
+    disabled={disabled}
+  >
+    PDF 다운로드
+  </button>
+);
+
+export default DownloadButton; 

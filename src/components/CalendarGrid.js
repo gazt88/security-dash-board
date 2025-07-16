@@ -1,41 +1,56 @@
 import React from 'react';
 
-const days = ['일', '월', '화', '수', '목', '금', '토'];
+const daysKo = ['일', '월', '화', '수', '목', '금', '토'];
 
-export function CalendarGrid({ year, month, events, onDayClick }) {
-  // month: 1~12
-  const firstDay = new Date(year, month - 1, 1);
-  const lastDay = new Date(year, month, 0);
-  const startDay = firstDay.getDay();
-  const totalDays = lastDay.getDate();
-  const weeks = [];
-  let day = 1 - startDay;
-  for (let w = 0; w < 6; w++) {
-    const week = [];
-    for (let d = 0; d < 7; d++, day++) {
-      if (day < 1 || day > totalDays) {
-        week.push(<td key={d} className="bg-neutral-800/10"></td>);
-      } else {
-        const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-        const dayEvents = events.filter(e => e.date === dateStr);
-        week.push(
-          <td key={d} className="h-20 align-top p-1 border" onClick={() => onDayClick(dateStr)}>
-            <div className="font-bold text-xs mb-1">{day}</div>
-            {dayEvents.map(ev => (
-              <div key={ev.id} className="text-xs bg-primary-500 text-base-white rounded px-1 mb-1 truncate">{ev.title}</div>
-            ))}
-          </td>
-        );
-      }
-    }
-    weeks.push(<tr key={w}>{week}</tr>);
-  }
+function getDaysInMonth(year, month) {
+  return new Date(year, month, 0).getDate();
+}
+
+const CalendarGrid = ({ year, month, events = [], onDateClick, holidayMap = {}, rosterMap = {} }) => {
+  const daysInMonth = getDaysInMonth(year, month);
+  const firstDay = new Date(year, month - 1, 1).getDay();
+  const eventMap = {};
+  events.forEach(ev => {
+    const d = new Date(ev.date).getDate();
+    if (!eventMap[d]) eventMap[d] = [];
+    eventMap[d].push(ev);
+  });
+
   return (
-    <table className="w-full border-collapse">
-      <thead>
-        <tr>{days.map(d => <th key={d} className="py-2 text-xs font-bold text-neutral-800">{d}</th>)}</tr>
-      </thead>
-      <tbody>{weeks}</tbody>
-    </table>
+    <div className="overflow-x-auto w-full">
+      <div className="grid grid-cols-7 gap-2 text-center text-gray-600 mb-2 min-w-[350px]">
+        {daysKo.map(d => <div key={d} className="font-semibold">{d}</div>)}
+      </div>
+      <div className="grid grid-cols-7 gap-2 min-h-[420px] min-w-[350px]">
+        {Array(firstDay).fill(null).map((_, i) => <div key={i}></div>)}
+        {Array(daysInMonth).fill(null).map((_, i) => {
+          const day = i + 1;
+          return (
+            <div
+              key={day}
+              className="border rounded min-h-[60px] p-1 bg-gray-50 hover:bg-blue-50 cursor-pointer flex flex-col"
+              onClick={() => onDateClick && onDateClick(day)}
+            >
+              <div className="text-xs font-bold text-gray-700 mb-1">{day}</div>
+              {holidayMap[day] && (
+                <div className="text-xs text-red-500 mb-1 font-semibold">{holidayMap[day]}</div>
+              )}
+              {eventMap[day] && eventMap[day].map((ev, idx) => (
+                <div key={idx} className="bg-blue-100 text-blue-800 rounded px-1 py-0.5 text-xs mb-1 truncate" title={ev.title}>
+                  {ev.title}
+                </div>
+              ))}
+              {rosterMap[day] && (
+                <div className="mt-auto text-xs bg-yellow-200 text-yellow-900 rounded px-1 py-0.5 font-semibold inline-block">
+                  당직: {rosterMap[day]}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
-} 
+};
+
+export default CalendarGrid; 
